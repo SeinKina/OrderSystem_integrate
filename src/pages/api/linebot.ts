@@ -1,5 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import * as line from '@line/bot-sdk';
+import { listenOrser } from './ListenOrder';
+
+export const userStatus: { [userId: string]: { status: string, userNumber: string, userName: string } } = {};
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
@@ -24,25 +27,32 @@ export default async function handler(
 
     if (!events || events.length === 0) {
       console.log('No events received');
-      res.status(400).json({ message: 'No events found' });
+      res.status(200).json({ message: 'no events' });
       return;
     }
 
     const event = events[0];
+    const userId = event.source.userId;
 
     if (event.type === 'message' && event.message.type === 'text') {
       const messageText = event.message.text;
 
-      if (messageText === 'hi') {
-        await client.replyMessage(event.replyToken, {
-          type: 'text',
-          text: 'hello',
-        });
-
+      if (messageText === '注文完了') {
+        console.log("ここだよ")
+        listenOrser(event, client);
         res.status(200).json({ message: 'hello ok' });
       } else {
+        if (!userStatus[userId]){
+          await client.replyMessage(event.replyToken, {
+            type: 'text',
+            text: 'たくさん注文してね',
+          });
+        } else {
+          listenOrser(event, client);
+        }
         res.status(200).json({ message: 'no hello' });
       }
+
     } else {
       res.status(400).json({ message: 'Unsupported event type' });
     }
