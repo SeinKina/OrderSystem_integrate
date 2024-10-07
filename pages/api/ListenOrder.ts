@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import * as line from '@line/bot-sdk';
 import { userStatus } from './linebot';
+import connectToDatabase from "../../lib/mongoose";
 
 export async function listenOrser(event: any, client: line.Client) {
     console.log("きたよ");
@@ -34,6 +35,8 @@ export async function listenOrser(event: any, client: line.Client) {
                   });
                   userStatus[userId].userName = messageText;
                   userStatus[userId].status = "watingName";
+                  await connectToDatabase();
+                  console.log("名前来てる");
                   userStatus[userId] = { status: '', userNumber: '', userName: '' };    // テスト用にいったん消してる
                 break;
         default:
