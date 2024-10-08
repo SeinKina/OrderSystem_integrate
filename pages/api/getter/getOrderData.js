@@ -2,12 +2,10 @@
 import connectToDatabase from '../../../lib/mongoose';
 import OrderData from '../../../models/OrderData';
 
-export async function getOrderData(userNumber) {
+export async function getOrderData(userNumber, userName) {
   await connectToDatabase();
   try {
-    // const userNumber = req.query.userNumber;  // userNumber を取得
-    console.log(!userNumber);
-    const allOrderData = await OrderData.find({ ticketNumber: userNumber });
+    const allOrderData = await OrderData.find({ ticketNumber: userNumber, clientName: userName });
 
     return allOrderData; // 取得したデータを返す
   } catch {

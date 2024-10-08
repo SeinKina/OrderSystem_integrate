@@ -11,6 +11,7 @@ export async function listenOrser(event: any, client: line.Client) {
 
     if (!userStatus[userId]) {
         userStatus[userId] = { status: 'chatStart', userNumber: 0, userName: '' };
+        console.log("空にしたよ");
     }
 
     switch (userStatus[userId].status) {
@@ -41,23 +42,39 @@ export async function listenOrser(event: any, client: line.Client) {
                 break;
             }
             case "watingName":
-                await client.replyMessage(event.replyToken, {
-                    type: 'text',
-                    text: '名前きた。',
-                  });
+                // await client.replyMessage(event.replyToken, {
+                //     type: 'text',
+                //     text: '名前きた。',
+                //   });
                   userStatus[userId].userName = messageText;
                   userStatus[userId].status = "watingName";
-                  const userOrderData = await getOrderData(userStatus[userId].userNumber);
                   console.log("名前来てる");
+
+                  const userOrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName);
                   if (Array.isArray(userOrderData)) {
                     // 成功時の処理
+                    if (userOrderData.length !== 0){
+                        await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: 'あったよ。',
+                      });
+                      }
+                      else{
+                        await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: '番号または名前が違います。',
+                      });
+                      }
                     console.log(userOrderData); // データを処理
                   } else if (userOrderData.success === false) {
                     // エラー時の処理
-                    console.log("Error fetching order data");
+                    console.log("userOrderData can't get");
+                    break;
                   }
-                 
-                  userStatus[userId] = { status: '', userNumber: 0, userName: '' };    // テスト用にいったん消してる
+
+                    Object.keys(userStatus).forEach(key => {
+                    delete userStatus[key];
+                    });  // テスト用にいったん消してる
                 break;
         default:
             break;

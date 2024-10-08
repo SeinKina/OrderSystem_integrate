@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import * as line from '@line/bot-sdk';
 import { listenOrser } from './ListenOrder';
 
-export const userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
+export let userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
