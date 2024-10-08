@@ -53,10 +53,13 @@ export async function listenOrser(event: any, client: line.Client) {
                   const userOrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName);
                   if (Array.isArray(userOrderData)) {
                     // 成功時の処理
+                    const clientName = userOrderData[0].clientName; // clientNameを取得
+                    const ticketNumber = userOrderData[0].ticketNumber; // clientNameを取得
+
                     if (userOrderData.length !== 0){
                         await client.replyMessage(event.replyToken, {
                         type: 'text',
-                        text: 'あったよ。',
+                        text: ` ${clientName} さんの注文番号は${ticketNumber}`,
                       });
                       }
                       else{
