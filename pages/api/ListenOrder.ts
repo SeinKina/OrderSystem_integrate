@@ -42,42 +42,35 @@ export async function listenOrser(event: any, client: line.Client) {
                 break;
             }
             case "watingName":
-                // await client.replyMessage(event.replyToken, {
-                //     type: 'text',
-                //     text: '名前きた。',
-                //   });
                   userStatus[userId].userName = messageText;
                   userStatus[userId].status = "watingName";
                   console.log("名前来てる");
 
-                  const userOrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName);
-                  if (Array.isArray(userOrderData)) {
-                    // 成功時の処理
-                    const clientName = userOrderData[0].clientName; // clientNameを取得
-                    const ticketNumber = userOrderData[0].ticketNumber; // clientNameを取得
-
-                    if (userOrderData.length !== 0){
-                        await client.replyMessage(event.replyToken, {
-                        type: 'text',
-                        text: ` ${clientName} さんの注文番号は${ticketNumber}`,
-                      });
-                      }
-                      else{
+                  const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
+                  if (OrderData.success === true) {
+                    const userOrderData = OrderData.orderDetails;
+                    if (!userOrderData){
+                        // 注文情報が見つからなかった場合の処理
                         await client.replyMessage(event.replyToken, {
                         type: 'text',
                         text: '番号または名前が違います。',
                       });
                       }
-                    console.log(userOrderData); // データを処理
-                  } else if (userOrderData.success === false) {
+                      else{
+                         // 注文情報が見つかった場合の処理
+                        const clientName = userOrderData.clientName; // clientNameを取得
+                        const ticketNumber = userOrderData.ticketNumber; // ticketNumberを取得
+                        await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: `${clientName}さんの注文番号は${ticketNumber}`,
+                      });
+                      }
+                    console.log(userOrderData);
+                  } else if (OrderData.success === false) {
                     // エラー時の処理
                     console.log("userOrderData can't get");
-                    break;
                   }
-
-                    Object.keys(userStatus).forEach(key => {
-                    delete userStatus[key];
-                    });  // テスト用にいったん消してる
+                delete userStatus[userId];
                 break;
         default:
             break;
