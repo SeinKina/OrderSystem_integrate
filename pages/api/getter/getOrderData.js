@@ -29,7 +29,7 @@ export async function getOrderData(userNumber, userName, lineUserId) {
     firstOrder.LineUserId = lineUserId; // 取得したデータにlineUserIdをセット
     await firstOrder.save();
     // 各注文の商品情報を追加
-    const orderDetails = {
+    const  orderDetails = {
         ticketNumber: firstOrder.ticketNumber,   // 整理券番号
         LineUserId: firstOrder.LineUserId,       // LINEのユーザーID
         clientName: firstOrder.clientName,       // 注文者名
@@ -41,7 +41,7 @@ export async function getOrderData(userNumber, userName, lineUserId) {
             productImageUrl: product.productImageUrl, // 商品画像URL
             orderQuantity: orderItem.orderQuantity,   // 注文個数
             storeId: orderItem.storeId,               // storeId
-            soreName: store.soreName,                 // 屋台名
+            storeName: store.storeName,                 // 屋台名
             };
         }),
         createdAt: firstOrder.createdAt,         // 作成日時

@@ -58,12 +58,14 @@ export async function listenOrser(event: any, client: line.Client) {
                       }
                       else{
                          // 注文情報が見つかった場合の処理
-                        const clientName = userOrderData.clientName; // clientNameを取得
-                        const ticketNumber = userOrderData.ticketNumber; // ticketNumberを取得
-                        await client.replyMessage(event.replyToken, {
-                        type: 'text',
-                        text: `${clientName}さんの注文番号は${ticketNumber}`,
-                      });
+                    //     const clientName = userOrderData.clientName; // clientNameを取得
+                    //     const ticketNumber = userOrderData.ticketNumber; // ticketNumberを取得
+                    //     await client.replyMessage(event.replyToken, {
+                    //     type: 'text',
+                    //     text: `${clientName}さんの注文番号は${ticketNumber}`,
+                    //   });
+                    const flexMsg = flexMessage(userOrderData);
+                    await client.replyMessage(event.replyToken, flexMsg);
                       }
                     console.log(userOrderData);
                   } else if (OrderData.success === false) {
@@ -75,4 +77,45 @@ export async function listenOrser(event: any, client: line.Client) {
         default:
             break;
     }
+}
+
+function flexMessage(userOrderData: any) {
+    return {
+        type: 'flex' as const,
+        altText: '注文情報',
+        contents: {
+            type: 'carousel' as const, // カルーセルタイプに変更
+            contents: userOrderData.orderList.map((item: any) => ({
+                type: 'bubble' as const, // 各商品のボックス
+                body: {
+                    type: 'box' as const,
+                    layout: 'vertical' as const,
+                    contents: [
+                        {
+                            type: 'image' as const,
+                            url: item.productImageUrl,
+                            size: 'sm',
+                            aspectRatio: '10:10', // 画像のアスペクト比を指定
+                            aspectMode: 'cover', // 画像をカバーする方式を指定
+                        },
+                        {
+                            type: 'text' as const,
+                            text: `商品: ${item.productName}`,
+                            wrap: true,
+                        },
+                        {
+                            type: 'text' as const,
+                            text: `数量: ${item.orderQuantity}個`,
+                            wrap: true,
+                        },
+                        {
+                            type: 'text' as const,
+                            text: `屋台: ${item.storeName}`,
+                            wrap: true,
+                        }
+                    ]
+                }
+            }))
+        }
+    } as line.FlexMessage; // 戻り値の型を明示的に指定
 }
