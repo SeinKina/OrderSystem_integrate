@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next'
 import * as line from '@line/bot-sdk';
 import { listenOrser } from './ListenOrder';
 
-export const userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
+export let userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
@@ -39,7 +39,7 @@ export default async function handler(
 
       if (messageText === '注文完了') {
         console.log("ここだよ")
-        listenOrser(event, client);
+        await listenOrser(event, client);
         res.status(200).json({ message: 'hello ok' });
       } else {
         if (!userStatus[userId]){
@@ -48,7 +48,7 @@ export default async function handler(
             text: 'たくさん注文してね',
           });
         } else {
-          listenOrser(event, client);
+          await listenOrser(event, client);
         }
         res.status(200).json({ message: 'no hello' });
       }

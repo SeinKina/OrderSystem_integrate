@@ -11,13 +11,14 @@ export async function listenOrser(event: any, client: line.Client) {
 
     if (!userStatus[userId]) {
         userStatus[userId] = { status: 'chatStart', userNumber: 0, userName: '' };
+        console.log("空にしたよ");
     }
 
     switch (userStatus[userId].status) {
         case "chatStart":
             await client.replyMessage(event.replyToken, {
                 type: 'text',
-                text: '番号を入力してください。',
+                text: 'チケット番号を入力してね',
               });
               userStatus[userId].status = "watingNumber";
             break;
@@ -27,7 +28,7 @@ export async function listenOrser(event: any, client: line.Client) {
             if(!isNaN(Number(normalizedMessageText))){
                 await client.replyMessage(event.replyToken, {
                     type: 'text',
-                    text: '注文時に登録した名前を入力してください。',
+                    text: '注文時に登録した名前をカタカナかひらがなで入力してね\n\n例: コウセンタロウ or こうせんたろう',
                     });
                     userStatus[userId].userNumber = normalizedMessageText;
                     userStatus[userId].status = "watingName";
@@ -41,25 +42,137 @@ export async function listenOrser(event: any, client: line.Client) {
                 break;
             }
             case "watingName":
-                await client.replyMessage(event.replyToken, {
-                    type: 'text',
-                    text: '名前きた。',
-                  });
-                  userStatus[userId].userName = messageText;
+                  const nameMessageText = messageText.replace(/[ぁ-ん]/g, (s: string) => String.fromCharCode(s.charCodeAt(0) + 0x60));
+                  userStatus[userId].userName = nameMessageText;
                   userStatus[userId].status = "watingName";
-                  const userOrderData = await getOrderData(userStatus[userId].userNumber);
                   console.log("名前来てる");
-                  if (Array.isArray(userOrderData)) {
-                    // 成功時の処理
-                    console.log(userOrderData); // データを処理
-                  } else if (userOrderData.success === false) {
+
+                  const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
+                  if (OrderData.success === true) {
+                    const userOrderData = OrderData.orderDetails;
+                    if (!userOrderData){
+                        // 注文情報が見つからなかった場合の処理
+                        await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: '番号または名前が違います。',
+                      });
+                    }
+                    else{
+                        // // 注文情報が見つかった場合の処理
+                        // const flexMsg = flexMessage(userOrderData);
+                        // await client.replyMessage(event.replyToken, [
+                        //     flexMsg,
+                        //     {
+                        //     type: 'text',
+                        //     text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
+                        //     }],
+                        // );
+                            // 注文情報が見つかった場合の処理
+                            const orderList = userOrderData.orderList;
+                            const firstPartOrderList = orderList.slice(0, 10); // 最初の10個
+                            const secondPartOrderList = orderList.slice(10); // 11個目以降
+
+                            const flexMsg1 = flexMessage({ ...userOrderData, orderList: firstPartOrderList });
+
+                            if (secondPartOrderList.length < 0) {
+                                const flexMsg2 = flexMessage({ ...userOrderData, orderList: secondPartOrderList });
+                                await client.replyMessage(event.replyToken, [
+                                    flexMsg1,
+                                    flexMsg2,
+                                    {
+                                    type: 'text',
+                                    text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
+                                }],
+                            );}
+                            else {
+                                await client.replyMessage(event.replyToken, [
+                                    flexMsg1,
+                                    {
+                                    type: 'text',
+                                    text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
+                                }],
+                                );
+                            }
+
+                            // // 最終メッセージを送信
+                            // await client.replyMessage(event.replyToken, {
+                            //     type: 'text',
+                            //     text: `${userOrderData.clientName}さんの注文は以上です。\n調理が完了したら僕が呼び出します！`,
+                            // });
+    
+                    }
+                    console.log(userOrderData);
+                  } else if (OrderData.success === false) {
                     // エラー時の処理
-                    console.log("Error fetching order data");
+                    console.log("userOrderData can't get");
                   }
-                 
-                  userStatus[userId] = { status: '', userNumber: 0, userName: '' };    // テスト用にいったん消してる
+                delete userStatus[userId];
                 break;
         default:
             break;
     }
+}
+
+function flexMessage(userOrderData: any) {
+    return {
+        type: 'flex',
+        altText: '注文情報',
+        contents: {
+            type: 'carousel', 
+            contents: userOrderData.orderList.map((item: any) => ({
+                type: 'bubble', 
+                size: 'hecto',
+                body: {
+                    type: 'box',
+                    layout: 'vertical',
+                    paddingAll: '0px', 
+                    contents: [
+                        {
+                            type: 'image',
+                            url: item.productImageUrl,
+                            size: 'full', // sm, md, lgの中から適宜変更可能
+                            aspectRatio: '1:1', 
+                            aspectMode: 'cover', // 画像を枠にフィット
+                        },
+                        {
+                            type: 'box',
+                            layout: 'vertical',
+                            paddingAll: '10px', 
+                            contents: [
+                                {
+                                    type: 'text',
+                                    text: `${item.productName}`,
+                                    wrap: true,
+                                    size: 'md',
+                                    weight: 'bold',
+                                    margin: 'lg'
+                                },
+                                {
+                                    type: 'text',
+                                    text: `屋台名: ${item.storeName}`,
+                                    wrap: true,
+                                    size: 'sm',
+                                    margin: 'md'
+                                },
+                                {
+                                    type: 'text',
+                                    text: `× ${item.orderQuantity}`,
+                                    wrap: true,
+                                    size: 'sm',
+                                    margin: 'md',
+                                    align: 'end'
+                                },
+                            ],
+                            paddingTop: '10px', // 画像とテキストの間に余白
+                        }
+                    ],
+                },
+                styles: {
+                    body: {
+                        backgroundColor: '#ffffff', // 背景色を白に設定
+                    }
+                }
+            }))
+        }
+    } as line.FlexMessage; // FlexMessageの型を明示的に指定
 }
