@@ -19,15 +19,28 @@ export async function getOrderData(userNumber, userName, lineUserId) {
     .exec();
     // console.log(orderData);
     if (orderData.length === 0){
+        console.log("空だったよ");
         return{
             success: true,
             orderDetails: null,
         }
     }
+    // console.log(orderData);    
 
     const firstOrder = orderData[0];
+    console.log(firstOrder);
     firstOrder.LineUserId = lineUserId; // 取得したデータにlineUserIdをセット
+    // console.log("################\n\n\n\n\nmiyasou追加分\n\n\n\n\n\n###################" + firstOrder);
     await firstOrder.save();
+
+    // await OrderData.findOneAndUpdate(
+    //     {
+    //         ticketNumber: userNumber,
+    //         clientName: userName,
+    //     },
+    //     {LineUserId: lineUserId},
+    // );
+
     // 各注文の商品情報を追加
     const  orderDetails = {
         ticketNumber: firstOrder.ticketNumber,   // 整理券番号
@@ -55,7 +68,11 @@ export async function getOrderData(userNumber, userName, lineUserId) {
         orderDetails,
     };
     // return allOrderData; // 取得したデータを返す
-  } catch {
+  } catch (error){
+    // console.error('Error occurred in getOrderData:', error.message);
+    // console.error('Error occurred in getOrderData:', error.message);
+    // console.error('Stack trace:', error.stack);
+    console.log('Error:', error.message);
     return { success: false }; // エラー処理
   }
 }

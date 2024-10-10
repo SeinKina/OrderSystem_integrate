@@ -58,41 +58,16 @@ export async function listenOrser(event: any, client: line.Client) {
                       });
                     }
                     else{
-                        // // 注文情報が見つかった場合の処理
-                        // const flexMsg = flexMessage(userOrderData);
-                        // await client.replyMessage(event.replyToken, [
-                        //     flexMsg,
-                        //     {
-                        //     type: 'text',
-                        //     text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
-                        //     }],
-                        // );
-                            // 注文情報が見つかった場合の処理
-                            const orderList = userOrderData.orderList;
-                            const firstPartOrderList = orderList.slice(0, 10); // 最初の10個
-                            const secondPartOrderList = orderList.slice(10); // 11個目以降
+                        // 注文情報が見つかった場合の処理
+                        const flexMsg = flexMessage(userOrderData);
+                        await client.replyMessage(event.replyToken, [
+                            flexMsg,
+                            {
+                            type: 'text',
+                            text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
+                            }],
+                        );
 
-                            const flexMsg1 = flexMessage({ ...userOrderData, orderList: firstPartOrderList });
-
-                            if (secondPartOrderList.length < 0) {
-                                const flexMsg2 = flexMessage({ ...userOrderData, orderList: secondPartOrderList });
-                                await client.replyMessage(event.replyToken, [
-                                    flexMsg1,
-                                    flexMsg2,
-                                    {
-                                    type: 'text',
-                                    text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
-                                }],
-                            );}
-                            else {
-                                await client.replyMessage(event.replyToken, [
-                                    flexMsg1,
-                                    {
-                                    type: 'text',
-                                    text: `${userOrderData.clientName}さんの注文は以上だよ。\n調理が完了したら僕が呼び出します！`,
-                                }],
-                                );
-                            }
 
                             // // 最終メッセージを送信
                             // await client.replyMessage(event.replyToken, {
@@ -105,6 +80,10 @@ export async function listenOrser(event: any, client: line.Client) {
                   } else if (OrderData.success === false) {
                     // エラー時の処理
                     console.log("userOrderData can't get");
+                    await client.replyMessage(event.replyToken, {
+                        type: 'text',
+                        text: '失敗しました',
+                      });
                   }
                 delete userStatus[userId];
                 break;

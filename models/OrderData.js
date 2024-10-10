@@ -12,10 +12,15 @@ const OrderDataSchema = new mongoose.Schema({
   },
 
   //LINEのユーザーID
+  // "lineUserId":{
+  //   type: mongoose.Schema.Types.String,
+  //   required: false,
+  //   unique: false,
+  // },
   "LineUserId":{
     type: mongoose.Schema.Types.String,
     required: false,
-    unique: true,
+    unique: false,
   },
 
   // 注文リスト
