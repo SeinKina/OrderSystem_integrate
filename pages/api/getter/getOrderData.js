@@ -30,7 +30,6 @@ export async function getOrderData(userNumber, userName, lineUserId) {
     const firstOrder = orderData[0];
     console.log(firstOrder);
     firstOrder.LineUserId = lineUserId; // 取得したデータにlineUserIdをセット
-    // console.log("################\n\n\n\n\nmiyasou追加分\n\n\n\n\n\n###################" + firstOrder);
     await firstOrder.save();
 
     // await OrderData.findOneAndUpdate(
