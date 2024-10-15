@@ -1,6 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import * as line from '@line/bot-sdk';
 import { listenOrser } from './ListenOrder';
+import { Client, ImageMessage } from '@line/bot-sdk';
+
 
 export let userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
 
@@ -41,7 +43,20 @@ export default async function handler(
         console.log("ここだよ")
         await listenOrser(event, client);
         res.status(200).json({ message: 'hello ok' });
-      } else {
+      } else if(messageText === 'メニュー'){
+        const imageUrl = 'https://possible-largely-chamois.ngrok-free.app/images/menu.png'; // 画像URL
+        // 画像メッセージを送信
+        const imageMessage: ImageMessage = {
+          type: 'image',                      // タイプを'image'に設定
+          originalContentUrl: imageUrl,       // 画像URL（公開されている必要があります）
+          previewImageUrl: imageUrl,          // プレビュー画像URL
+        };
+
+        // メッセージを返信
+        await client.replyMessage(event.replyToken, imageMessage);
+        
+      }
+      else {
         if (!userStatus[userId]){
           await client.replyMessage(event.replyToken, {
             type: 'text',
