@@ -54,29 +54,30 @@ export async function listenOrser(event: any, client: line.Client) {
                     });
                 } else {
                     // 店ごとに注文情報をグループ化
-                    const storeOrderMap: { [storeName: string]: any[] } = {};
+                    const storeOrderMap: { [storeId: string]: any[] } = {};
                     userOrderData.orderList.forEach((item: any) => {
-                        if (!storeOrderMap[item.storeName]) {
-                            storeOrderMap[item.storeName] = [];
+                        if (!storeOrderMap[item.storeId]) {
+                            storeOrderMap[item.storeId] = [];
                         }
-                        storeOrderMap[item.storeName].push(item);
+                        storeOrderMap[item.storeId].push(item);
                     });
 
                     // 各店ごとにフレックスメッセージを作成して送信
-                    for (const [storeName, orders] of Object.entries(storeOrderMap)) {
+                    for (const [storeId, orders] of Object.entries(storeOrderMap)) {
                         const flexMsg = flexMessage(orders);
+                        const waitTimeValue = userOrderData.waitTime.get(storeId);
                         await client.pushMessage(userId, [
                             flexMsg,
                             {
                                 type: 'text',
-                                text: `${storeName}の注文です。`,
+                                text: `${orders[0].storeName}の注文です。待ち時間は約${waitTimeValue} 分です。`,
                             },
-　                        ]);
+                            ]);
                     }
                     await client.pushMessage(userId, [
                         {
                             type: 'text',
-                            text: `${userOrderData.clientName}さんの注文は以上だよ。`,
+                            text: `${userOrderData.clientName}さんの注文は以上だよ。\n※待ち時間は大幅に前後する可能性があります。`,
                         },
                     ]);
 
