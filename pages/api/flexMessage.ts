@@ -1,5 +1,5 @@
-import * as line from '@line/bot-sdk';
-export async function flexMessage(orderList: any) {
+import { messagingApi } from '@line/bot-sdk';
+export async function flexMessage(orderList: any): Promise<messagingApi.Message> {
     return {
         type: 'flex',
         altText: '注文情報',
@@ -60,5 +60,5 @@ export async function flexMessage(orderList: any) {
                 },
             })),
         },
-    } as line.FlexMessage;
+    }
 }

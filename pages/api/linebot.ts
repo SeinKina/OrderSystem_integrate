@@ -1,8 +1,8 @@
 import { NextApiRequest, NextApiResponse } from 'next'
-import * as line from '@line/bot-sdk';
 import { listenOrder } from './ListenOrder';
-import { Client, ImageMessage } from '@line/bot-sdk';
-
+import { ImageMessage } from '@line/bot-sdk';
+import * as line from '@line/bot-sdk';
+const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 export let userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
 
@@ -11,7 +11,7 @@ const config = {
   channelSecret: process.env.CHANNEL_SECRET!
 };
 
-const client = new line.Client(config);
+const client =  new MessagingApiClient(config);
 
 export default async function handler(
   req: NextApiRequest,
@@ -47,20 +47,20 @@ export default async function handler(
         const imageUrl = 'https://possible-largely-chamois.ngrok-free.app/images/menu.png'; // 画像URL
         // 画像メッセージを送信
         const imageMessage: ImageMessage = {
-          type: 'image',                      // タイプを'image'に設定
-          originalContentUrl: imageUrl,       // 画像URL（公開されている必要があります）
-          previewImageUrl: imageUrl,          // プレビュー画像URL
+          type: 'image',                      
+          originalContentUrl: imageUrl,       
+          previewImageUrl: imageUrl,         
         };
 
         // メッセージを返信
-        await client.replyMessage(event.replyToken, imageMessage);
+        // await client.replyMessage(event.replyToken, imageMessage);
         
       }
       else {
         if (!userStatus[userId]){
-          await client.replyMessage(event.replyToken, {
-            type: 'text',
-            text: 'たくさん注文してね',
+          await client.pushMessage({
+            to: userId,
+            messages:[{type:"text", "text":"たくさん注文してね"},],
           });
         } else {
           await listenOrder(event, client);
