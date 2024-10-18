@@ -4,19 +4,29 @@ import OrderData from '../../../models/OrderData';
 import ProductData from '../../../models/ProductData';
 import StoreData from '../../../models/StoreData';
 
+// タイムアウト用のヘルパー関数
+function timeoutPromise(ms) {
+    return new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Request timed out after ${ms} ms`)), ms)
+    );
+  }
+  
 export async function getOrderData(userNumber, userName, lineUserId) {
   await connectToDatabase();
   try {
-    const orderData = await OrderData.find({ ticketNumber: userNumber, clientName: userName })
-    .populate({
-        path: 'orderList.productId',
-        select: 'productName productImageUrl',
-    })
-    .populate({
-        path: 'orderList.storeId',
-        select: 'storeName',
-    })
-    .exec();
+    const orderData = await Promise.race([OrderData.find({ ticketNumber: userNumber, clientName: userName })
+        .populate({
+            path: 'orderList.productId',
+            select: 'productName productImageUrl',
+        })
+        .populate({
+            path: 'orderList.storeId',
+            select: 'storeName',
+        })
+        .exec(),
+        timeoutPromise(10000) // 10秒以内に解決されなければタイムアウト
+    ]);
+
     if (orderData.length === 0){
         console.log("空だったよ");
         return{

@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import * as line from '@line/bot-sdk';
-import { listenOrser } from './ListenOrder';
+import { listenOrder } from './ListenOrder';
 import { Client, ImageMessage } from '@line/bot-sdk';
 
 
@@ -39,9 +39,9 @@ export default async function handler(
     if (event.type === 'message' && event.message.type === 'text') {
       const messageText = event.message.text;
 
-      if (messageText === '注文完了') {
+      if (messageText === '連携開始') {
         console.log("ここだよ")
-        await listenOrser(event, client);
+        await listenOrder(event, client);
         res.status(200).json({ message: 'hello ok' });
       } else if(messageText === 'メニュー'){
         const imageUrl = 'https://possible-largely-chamois.ngrok-free.app/images/menu.png'; // 画像URL
@@ -63,7 +63,7 @@ export default async function handler(
             text: 'たくさん注文してね',
           });
         } else {
-          await listenOrser(event, client);
+          await listenOrder(event, client);
         }
         res.status(200).json({ message: 'no hello' });
       }

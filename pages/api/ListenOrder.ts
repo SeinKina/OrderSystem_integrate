@@ -4,7 +4,7 @@ import { userStatus } from './linebot';
 import { getOrderData } from './getter/getOrderData';
 import { flexMessage } from './flexMessage';
 
-export async function listenOrser(event: any, client: line.Client) {
+export async function listenOrder(event: any, client: line.Client) {
     console.log("きたよ");
     const userId = event.source.userId;
     const messageText = event.message.text;
@@ -46,6 +46,10 @@ export async function listenOrser(event: any, client: line.Client) {
             console.log("名前来てる");
 
             const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
+            // await client.showLoadingAnimation({
+            //     chatId: '{{YOUR_USER_ID}}',
+            //     loadingSeconds: 40
+            //   })
             if (OrderData.success === true) {
                 const userOrderData = OrderData.orderDetails;
                 if (!userOrderData) {
@@ -94,7 +98,7 @@ export async function listenOrser(event: any, client: line.Client) {
                 console.log("userOrderData can't get");
                 await client.replyMessage(event.replyToken, {
                     type: 'text',
-                    text: '失敗しました',
+                    text: 'データの取得に失敗しました\n時間を置いてもう一度入力を行って下さい',
                 });
             }
             delete userStatus[userId];
