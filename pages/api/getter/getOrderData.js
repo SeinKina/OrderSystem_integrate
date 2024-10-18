@@ -27,21 +27,13 @@ export async function getOrderData(userNumber, userName, lineUserId) {
 
     const firstOrder = orderData[0];
     // console.log(firstOrder);
-    firstOrder.LineUserId = lineUserId; // 取得したデータにlineUserIdをセット
+    firstOrder.lineUserId = lineUserId; // 取得したデータにlineUserIdをセット
     await firstOrder.save();
-
-    // await OrderData.findOneAndUpdate(
-    //     {
-    //         ticketNumber: userNumber,
-    //         clientName: userName,
-    //     },
-    //     {LineUserId: lineUserId},
-    // );
 
     // 各注文の商品情報を追加
     const  orderDetails = {
         ticketNumber: firstOrder.ticketNumber,   // 整理券番号
-        LineUserId: firstOrder.LineUserId,       // LINEのユーザーID
+        LineUserId: firstOrder.lineUserId,       // LINEのユーザーID
         clientName: firstOrder.clientName,       // 注文者名
         orderList: firstOrder.orderList.map(orderItem => {
             console.log("storeIdこれ: " ,orderItem.storeId);
