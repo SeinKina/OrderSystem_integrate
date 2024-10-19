@@ -53,11 +53,6 @@ export async function flexMessage(orderList: any): Promise<messagingApi.Message>
                         },
                     ],
                 },
-                styles: {
-                    body: {
-                        backgroundColor: '#ffffff',
-                    },
-                },
             })),
         },
     }

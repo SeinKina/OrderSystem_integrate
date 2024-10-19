@@ -6,13 +6,11 @@ import * as line from '@line/bot-sdk';
 const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 export async function listenOrder(event: any, client: line.messagingApi.MessagingApiClient) {
-    console.log("きたよ");
     const userId = event.source.userId;
     const messageText = event.message.text;
 
     if (!userStatus[userId]) {
         userStatus[userId] = { status: 'chatStart', userNumber: 0, userName: '' };
-        console.log("空にしたよ");
     }
 
     switch (userStatus[userId].status) {
@@ -44,7 +42,6 @@ export async function listenOrder(event: any, client: line.messagingApi.Messagin
             const nameMessageText = messageText.replace(/[ぁ-ん]/g, (s: string) => String.fromCharCode(s.charCodeAt(0) + 0x60));
             userStatus[userId].userName = nameMessageText;
             userStatus[userId].status = "watingName";
-            console.log("名前来てる");
 
             const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
             await client.showLoadingAnimation({
@@ -86,7 +83,6 @@ export async function listenOrder(event: any, client: line.messagingApi.Messagin
                         messages: [{type:"text", "text": `${userOrderData.clientName}さんの注文は以上です\n屋台ごとに調理が完了でき次第お呼びします！しばらくお待ちください\n\n※待ち時間は大幅に前後する可能性があります`},],
                     });
                 }
-                console.log(userOrderData);
             } else if (OrderData.success === false) {
                 console.log("userOrderData can't get");
                 await client.pushMessage({

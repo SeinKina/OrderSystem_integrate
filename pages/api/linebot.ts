@@ -22,8 +22,6 @@ export default async function handler(
     return;
   }
 
-  console.log('Request body:', req.body);  // リクエストボディを出力
-
   try {
     const events = req.body.events;
 
@@ -48,7 +46,7 @@ export default async function handler(
           chatId: userId,
           loadingSeconds: 30,
         });
-        const imageUrl = 'https://possible-largely-chamois.ngrok-free.app/images/menu.png'; // 画像URL
+        const imageUrl = 'https://possible-largely-chamois.ngrok-free.app/images/menu.png';
         // 画像メッセージを送信
         
         const imageMessage: ImageMessage = {
@@ -57,8 +55,6 @@ export default async function handler(
           previewImageUrl: imageUrl,         
         };
 
-        // メッセージを返信
-        // await client.replyMessage(event.replyToken, imageMessage);
         await client.pushMessage({
           to: userId,
           messages:[imageMessage],

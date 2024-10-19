@@ -58,8 +58,6 @@ export async function getOrderData(userNumber, userName, lineUserId) {
         waitTime: firstOrder.waitTime,
     }; 
 
-    console.log(orderDetails);
-
     return {
         success: true,
         orderDetails,

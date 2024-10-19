@@ -5,8 +5,6 @@ const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 export async function SendCookedOrders(OrderData: any){
     console.log("sendCookedOrderきたよ");
-    console.log("OrderData : ", OrderData);
-    console.log("OrderData.List:", OrderData.orderList);
     const config = {
         channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
         channelSecret: process.env.CHANNEL_SECRET!
@@ -75,7 +73,6 @@ export async function SendCookedOrders(OrderData: any){
                         size: 'md',
                     },
                     ],
-                    // backgroundColor: '#00AA00',
                 },
             },
           }
