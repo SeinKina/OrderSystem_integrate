@@ -43,7 +43,6 @@ export async function getOrderData(userNumber, userName, lineUserId) {
     // 各注文の商品情報を追加
     const  orderDetails = {
         ticketNumber: firstOrder.ticketNumber,   // 整理券番号
-        LineUserId: firstOrder.lineUserId,       // LINEのユーザーID
         clientName: firstOrder.clientName,       // 注文者名
         orderList: firstOrder.orderList.map(orderItem => {
             console.log("storeIdこれ: " ,orderItem.storeId);
@@ -52,13 +51,11 @@ export async function getOrderData(userNumber, userName, lineUserId) {
             productName: product.productName,         // 商品名
             productImageUrl: product.productImageUrl, // 商品画像URL
             orderQuantity: orderItem.orderQuantity,   // 注文個数
-            storeId: orderItem.storeId._id.toString(),               // storeId
-            storeName: orderItem.storeId.storeName,                   // 屋台名
+            storeId: orderItem.storeId._id.toString(),  // storeId
+            storeName: orderItem.storeId.storeName,     // 屋台名
             };
         }),
         waitTime: firstOrder.waitTime,
-        createdAt: firstOrder.createdAt,         // 作成日時
-        updatedAt: firstOrder.updatedAt,         // 更新日時
     }; 
 
     console.log(orderDetails);
@@ -67,7 +64,6 @@ export async function getOrderData(userNumber, userName, lineUserId) {
         success: true,
         orderDetails,
     };
-    // return allOrderData; // 取得したデータを返す
   } catch (error){
 
     console.log('Error:', error.message);
