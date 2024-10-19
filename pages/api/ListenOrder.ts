@@ -47,6 +47,10 @@ export async function listenOrder(event: any, client: line.messagingApi.Messagin
             console.log("名前来てる");
 
             const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
+            await client.showLoadingAnimation({
+                chatId: userId,
+                loadingSeconds: 30,
+            });
             if (OrderData.success === true) {
                 const userOrderData = OrderData.orderDetails;
                 if (!userOrderData) {
@@ -81,30 +85,10 @@ export async function listenOrder(event: any, client: line.messagingApi.Messagin
                         to: userId,
                         messages: [{type:"text", "text": `${userOrderData.clientName}さんの注文は以上です\n屋台ごとに調理が完了でき次第お呼びします！しばらくお待ちください\n\n※待ち時間は大幅に前後する可能性があります`},],
                     });
-                    //     await client.pushMessage(userId, [
-                    //         flexMsg,
-                    //         {
-                    //             type: 'text',
-                    //             text: ``,
-                    //         },
-                    //     ]);
-                    // }
-                    // await client.pushMessage(userId, [
-                    //     {
-                    //         type: 'text',
-                    //         text: `${userOrderData.clientName}さんの注文は以上です\n屋台ごとに調理が完了でき次第お呼びします！しばらくお待ちください\n\n※待ち時間は大幅に前後する可能性があります`,
-                    //     },
-                    // ]);  
-
-                
-            }
+                }
                 console.log(userOrderData);
             } else if (OrderData.success === false) {
                 console.log("userOrderData can't get");
-                // await client.replyMessage(event.replyToken, {
-                //     type: 'text',
-                //     text: '',
-                // });
                 await client.pushMessage({
                     to: userId,
                     messages: [{type:"text", "text":"データの取得に失敗しました\n時間を置いてもう一度入力を行って下さい"}],

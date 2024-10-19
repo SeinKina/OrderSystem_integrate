@@ -44,8 +44,13 @@ export default async function handler(
         await listenOrder(event, client);
         res.status(200).json({ message: 'hello ok' });
       } else if(messageText === 'メニュー'){
+        await client.showLoadingAnimation({
+          chatId: userId,
+          loadingSeconds: 30,
+        });
         const imageUrl = 'https://possible-largely-chamois.ngrok-free.app/images/menu.png'; // 画像URL
         // 画像メッセージを送信
+        
         const imageMessage: ImageMessage = {
           type: 'image',                      
           originalContentUrl: imageUrl,       
@@ -54,6 +59,10 @@ export default async function handler(
 
         // メッセージを返信
         // await client.replyMessage(event.replyToken, imageMessage);
+        await client.pushMessage({
+          to: userId,
+          messages:[imageMessage],
+        });
         
       }
       else {

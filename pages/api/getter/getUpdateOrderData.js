@@ -19,7 +19,7 @@ export async function getUpdateOrderData(storeOrder) {
   
       // orderIdのpopulateを手動で実装
       const orderData = await OrderData.findById(storeOrder.orderId)
-        .select('clientName lineUserId')
+        .select('clientName lineUserId ticketNumber')
         .exec();
       
       // orderListの各itemのproductIdとstoreIdのpopulateを手動で実装
@@ -44,6 +44,7 @@ export async function getUpdateOrderData(storeOrder) {
       );
   
       const formattedOrder = {
+        ticketNumber: orderData?.ticketNumber || 'Unknown Name',
         lineUserId: orderData?.lineUserId || 'Unknown User',
         clientName: orderData?.clientName || 'Unknown Client',
         orderList: populatedOrderList,

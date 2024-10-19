@@ -9,7 +9,7 @@ function timeoutPromise(ms) {
     return new Promise((_, reject) =>
       setTimeout(() => reject(new Error(`Request timed out after ${ms} ms`)), ms)
     );
-  }
+}
   
 export async function getOrderData(userNumber, userName, lineUserId) {
   await connectToDatabase();
