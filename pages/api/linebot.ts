@@ -37,11 +37,11 @@ export default async function handler(
     if (event.type === 'message' && event.message.type === 'text') {
       const messageText = event.message.text;
 
-      if (messageText === '連携開始') {
+      if (messageText === '注文情報との連携') {
         console.log("ここだよ")
         await listenOrder(event, client);
         res.status(200).json({ message: 'hello ok' });
-      } else if(messageText === 'メニュー'){
+      } else if(messageText === 'メニュー表'){
         await client.showLoadingAnimation({
           chatId: userId,
           loadingSeconds: 30,

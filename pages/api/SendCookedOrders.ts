@@ -68,7 +68,7 @@ export async function SendCookedOrders(OrderData: any){
                     },
                     {
                         type: 'text',
-                        text: `\n上記の商品が出来上がりました！\nこの画面を表示して${userOrderList[0].storeName}まで受け取りに来てください\n`,
+                        text: `\n上記の商品が出来上がりました\nこの画面を表示して${userOrderList[0].storeName}まで受け取りに来てください\n`,
                         wrap: true,
                         size: 'md',
                     },
