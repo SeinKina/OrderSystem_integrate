@@ -4,9 +4,27 @@ import { flexMessage } from './flexMessage';
 import * as line from '@line/bot-sdk';
 // const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
-export async function listenOrder(event: any, client: line.messagingApi.MessagingApiClient) {
+export interface orderList {
+    productName: string;
+    productImageUrl: string;
+    orderQuantity: number;
+    storeId: string;
+    storeName: string;
+};
+
+export async function listenOrder(event: line.WebhookEvent, client: line.messagingApi.MessagingApiClient) {
     const userId = event.source.userId;
-    const messageText = event.message.text;
+    if (!userId){
+        return;
+    }
+
+    let messageText = "";
+    if (event.type !== "message") {
+		return;
+	}
+	if (event.message.type === "text"){
+		messageText = event.message.text;
+	}
 
     if (!userStatus[userId]) {
         userStatus[userId] = { status: 'chatStart', userNumber: 0, userName: '' };
@@ -27,7 +45,7 @@ export async function listenOrder(event: any, client: line.messagingApi.Messagin
                     replyToken: event.replyToken,
                     messages: [{type:"text", "text":"注文時に登録した名前をカタカナかひらがなで入力してください\n\n例: コウセンタロウ or こうせんたろう"}],
                 });
-                userStatus[userId].userNumber = normalizedMessageText;
+                userStatus[userId].userNumber = Number(normalizedMessageText);
                 userStatus[userId].status = "watingName";
                 break;
             } else {
@@ -56,8 +74,8 @@ export async function listenOrder(event: any, client: line.messagingApi.Messagin
                     });
                 } else {
                     // 店ごとに注文情報をグループ化
-                    const storeOrderMap: { [storeId: string]: any[] } = {};
-                    userOrderData.orderList.forEach((item: any) => {
+                    const storeOrderMap: { [storeId: string]: orderList[] } = {};
+                    userOrderData.orderList.forEach((item: orderList) => {
                         if (!storeOrderMap[item.storeId]) {
                             storeOrderMap[item.storeId] = [];
                         }

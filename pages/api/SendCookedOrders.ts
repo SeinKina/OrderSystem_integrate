@@ -1,9 +1,17 @@
 // import { Client, ImageMessage } from '@line/bot-sdk';
 import { flexMessage } from './flexMessage';
 import * as line from '@line/bot-sdk';
+import { orderList } from './ListenOrder';
 const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
-export async function SendCookedOrders(OrderData: any){
+interface orderDate {
+    ticketNumber: number;
+    lineUserId: string;
+    clientName: string;
+    orderList: orderList[];
+};
+
+export async function SendCookedOrders(OrderData: orderDate){
     console.log("sendCookedOrderきたよ");
     const config = {
         channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
@@ -13,9 +21,9 @@ export async function SendCookedOrders(OrderData: any){
     const client =  new MessagingApiClient(config);
 
 
-    const userOrderData = OrderData.orderDetails;
-    const userOrderList = userOrderData.orderList;
-    const userId = userOrderData.lineUserId;
+    // const userOrderData = OrderData.orderDetails;
+    const userOrderList = OrderData.orderList;
+    const userId = OrderData.lineUserId;
     // 各店ごとにフレックスメッセージを作成して送信
     const flexMsg = await flexMessage(userOrderList);
     await client.pushMessage({
@@ -23,7 +31,7 @@ export async function SendCookedOrders(OrderData: any){
         messages: [
             {
                 type:'text',
-                text: `${userOrderData.clientName}さんお待たせしました！`
+                text: `${OrderData.clientName}さんお待たせしました！`
             },
             flexMsg,
             {
@@ -46,7 +54,7 @@ export async function SendCookedOrders(OrderData: any){
                     },
                     {
                         type: 'text',
-                        text: `${userOrderData.ticketNumber}`,
+                        text: `${OrderData.ticketNumber}`,
                         wrap: true,
                         size: '5xl',
                         color: '#00AA00', 

@@ -40,7 +40,7 @@ export default async function ListenUpdateOrderData(req, res) {
             return
           }
           console.log("引数:", userOrderData);
-          SendCookedOrders(userOrderData);
+          SendCookedOrders(userOrderData.orderDetails);
           // 必要な処理をここに追加
         }
     });

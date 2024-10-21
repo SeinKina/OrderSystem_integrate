@@ -1,11 +1,12 @@
 import { messagingApi } from '@line/bot-sdk';
-export async function flexMessage(orderList: any): Promise<messagingApi.Message> {
+import { orderList } from './ListenOrder';
+export async function flexMessage(orderList: orderList[]): Promise<messagingApi.Message> {
     return {
         type: 'flex',
         altText: '注文情報',
         contents: {
             type: 'carousel',
-            contents: orderList.map((item: any) => ({
+            contents: orderList.map((item: orderList) => ({
                 type: 'bubble',
                 size: 'hecto',
                 body: {

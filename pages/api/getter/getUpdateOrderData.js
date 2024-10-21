@@ -1,5 +1,5 @@
-import mongoose from 'mongoose';
-import StoreOrderSchema from '../../../models/StoreOrder';
+// import mongoose from 'mongoose';
+// import StoreOrderSchema from '../../../models/StoreOrder';
 import OrderData from '../../../models/OrderData';    
 import ProductData from '../../../models/ProductData';   
 import StoreData from '../../../models/StoreData'
@@ -8,12 +8,12 @@ import connectToDatabase from '../../../lib/mongoose';
 export async function getUpdateOrderData(storeOrder) {
     try {
       await connectToDatabase();
-      let StoreOrder;
-    if (mongoose.modelNames().includes("demostore_orders")) {
-      StoreOrder = mongoose.model("demostore_orders");
-    } else {
-      StoreOrder = mongoose.model("demostore_orders", StoreOrderSchema);
-    }
+    //   let StoreOrder;
+    // if (mongoose.modelNames().includes("demostore_orders")) {
+    //   StoreOrder = mongoose.model("demostore_orders");
+    // } else {
+    //   StoreOrder = mongoose.model("demostore_orders", StoreOrderSchema);
+    // }
   
       // orderIdのpopulateを手動で実装
       const orderData = await OrderData.findById(storeOrder.orderId)
