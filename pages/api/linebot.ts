@@ -4,7 +4,7 @@ import { ImageMessage } from '@line/bot-sdk';
 import * as line from '@line/bot-sdk';
 const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
-export let userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
+export const userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
@@ -55,16 +55,16 @@ export default async function handler(
           previewImageUrl: imageUrl,         
         };
 
-        await client.pushMessage({
-          to: userId,
+        await client.replyMessage({
+          replyToken: event.replyToken,
           messages:[imageMessage],
         });
         
       }
       else {
         if (!userStatus[userId]){
-          await client.pushMessage({
-            to: userId,
+          await client.replyMessage({
+            replyToken: event.replyToken,
             messages:[{type:"text", "text":"たくさん注文してね"},],
           });
         } else {
@@ -77,6 +77,7 @@ export default async function handler(
       res.status(400).json({ message: 'Unsupported event type' });
     }
   } catch (e) {
+    console.log("era-500: ", e);
     res.status(500).json({ message: `error: ${e}` });
   }
 }

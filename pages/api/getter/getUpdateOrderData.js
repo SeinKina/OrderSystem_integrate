@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 import StoreOrderSchema from '../../../models/StoreOrder';
-import StoreOrder from '../../../models/StoreOrder'
 import OrderData from '../../../models/OrderData';    
 import ProductData from '../../../models/ProductData';   
 import StoreData from '../../../models/StoreData'
