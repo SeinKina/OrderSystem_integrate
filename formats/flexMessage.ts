@@ -1,5 +1,5 @@
 import { messagingApi } from '@line/bot-sdk';
-import { orderList } from '../api/ListenOrder';
+import { orderList } from '../pages/api/ListenOrder';
 export async function flexMessage(orderList: orderList[]): Promise<messagingApi.Message> {
     return {
         type: 'flex',

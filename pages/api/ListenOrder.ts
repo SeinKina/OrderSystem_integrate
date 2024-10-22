@@ -1,8 +1,8 @@
 import { userStatus } from './linebot';
 import { getOrderData } from './getter/getOrderData';
-import { flexMessage } from '../formats/flexMessage';
+import { flexMessage } from '../../formats/flexMessage';
 import * as line from '@line/bot-sdk';
-import { ticketMessge } from '../formats/tickeMessage';
+import { ticketMessge } from '../../formats/tickeMessage';
 // const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 export interface orderList {

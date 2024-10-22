@@ -1,8 +1,8 @@
 // import { Client, ImageMessage } from '@line/bot-sdk';
-import { flexMessage } from '../formats/flexMessage';
+import { flexMessage } from '../../formats/flexMessage';
 import * as line from '@line/bot-sdk';
 import { orderList } from './ListenOrder';
-import { ticketMessge } from '../formats/tickeMessage';
+import { ticketMessge } from '../../formats/tickeMessage';
 const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 interface orderDate {
