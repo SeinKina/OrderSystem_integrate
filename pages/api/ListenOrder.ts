@@ -80,7 +80,7 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                     userOrderData.orderList.forEach((item: orderList) => {
                         if (!storeOrderMap[item.storeId]) {
                             storeOrderMap[item.storeId] = [];
-                            if(userOrderData.finishCook === true){
+                            if(userOrderData.finishCook.get(item.storeName) === true){
                                 finishCookStoreName.push(item.storeName);
                             }
                         }
