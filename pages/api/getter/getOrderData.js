@@ -1,8 +1,8 @@
 // pages/api/getOrderData.js
 import connectToDatabase from '../../../lib/mongoose';
 import OrderData from '../../../models/OrderData';
-import ProductData from '../../../models/ProductData';
-import StoreData from '../../../models/StoreData';
+import ProductData from '../../../models/ProductData';  // eslint-disable-line
+import StoreData from '../../../models/StoreData';  // eslint-disable-line
 
 // タイムアウト用のヘルパー関数
 function timeoutPromise(ms) {
