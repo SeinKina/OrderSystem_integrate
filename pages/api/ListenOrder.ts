@@ -111,7 +111,11 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                             messages: [{type:"text", "text": `以下の屋台は既に調理が完了しています`},],
                         });
                         for (const storeName of finishCookStoreName){
-                            const ticketMsg = ticketMessge(userOrderData.ticketNumber, storeName);
+                            const ticketMsg = await ticketMessge(userOrderData.ticketNumber, storeName);
+                            await client.pushMessage({
+                                to: userId,
+                                messages: [ticketMsg,]
+                            });
                         }
                     }
                 }
