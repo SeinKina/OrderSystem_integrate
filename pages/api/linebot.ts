@@ -46,7 +46,7 @@ export default async function handler(
           chatId: userId,
           loadingSeconds: 30,
         });
-        const imageUrl = 'https://order-system-linebot-lll1c0dkq-nakayuu803s-projects.vercel.app/images/menu.png';
+        const imageUrl = 'https://order-system-linebot.vercel.app/images/menu.png';
         // 画像メッセージを送信
         
         const imageMessage: ImageMessage = {

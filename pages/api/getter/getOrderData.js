@@ -56,6 +56,7 @@ export async function getOrderData(userNumber, userName, lineUserId) {
             };
         }),
         waitTime: firstOrder.waitTime,
+        finishCook: firstOrder.finishCook,
     }; 
 
     console.log("wittime: ", firstOrder.waitTime);

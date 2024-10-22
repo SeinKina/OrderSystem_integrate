@@ -1,7 +1,8 @@
 import { userStatus } from './linebot';
 import { getOrderData } from './getter/getOrderData';
-import { flexMessage } from './flexMessage';
+import { flexMessage } from '../formats/flexMessage';
 import * as line from '@line/bot-sdk';
+import { ticketMessge } from '../formats/tickeMessage';
 // const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
 export interface orderList {
@@ -75,9 +76,13 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                 } else {
                     // 店ごとに注文情報をグループ化
                     const storeOrderMap: { [storeId: string]: orderList[] } = {};
+                    const finishCookStoreName: string[] = [];
                     userOrderData.orderList.forEach((item: orderList) => {
                         if (!storeOrderMap[item.storeId]) {
                             storeOrderMap[item.storeId] = [];
+                            if(userOrderData.finishCook === true){
+                                finishCookStoreName.push(item.storeName);
+                            }
                         }
                         storeOrderMap[item.storeId].push(item);
                     });
@@ -99,6 +104,16 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                         to: userId,
                         messages: [{type:"text", "text": `${userOrderData.clientName}さんの注文は以上です\n屋台ごとに調理が完了でき次第お呼びします！しばらくお待ちください\n\n※待ち時間は大幅に前後する可能性があります`},],
                     });
+
+                    if(finishCookStoreName.length !== 0){
+                        await client.pushMessage({
+                            to: userId,
+                            messages: [{type:"text", "text": `以下の屋台は既に調理が完了しています`},],
+                        });
+                        for (const storeName of finishCookStoreName){
+                            const ticketMsg = ticketMessge(userOrderData.ticketNumber, storeName);
+                        }
+                    }
                 }
             } else if (OrderData.success === false) {
                 console.log("userOrderData can't get");
