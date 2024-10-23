@@ -60,12 +60,11 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
             const nameMessageText = messageText.replace(/[ぁ-ん]/g, (s: string) => String.fromCharCode(s.charCodeAt(0) + 0x60));
             userStatus[userId].userName = nameMessageText;
             userStatus[userId].status = "watingName";
-
-            const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
             await client.showLoadingAnimation({
                 chatId: userId,
                 loadingSeconds: 30,
             });
+            const OrderData = await getOrderData(userStatus[userId].userNumber, userStatus[userId].userName, userId);
             if (OrderData.success === true) {
                 const userOrderData = OrderData.orderDetails;
                 if (!userOrderData) {
@@ -81,6 +80,7 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                         if (!storeOrderMap[item.storeId]) {
                             storeOrderMap[item.storeId] = [];
                             if(userOrderData.finishCook.get(item.storeName) === true){
+                                // 調理が既に完了している屋台を保存
                                 finishCookStoreName.push(item.storeName);
                             }
                         }
