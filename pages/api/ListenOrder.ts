@@ -79,7 +79,7 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                     userOrderData.orderList.forEach((item: orderList) => {
                         if (!storeOrderMap[item.storeId]) {
                             storeOrderMap[item.storeId] = [];
-                            if(userOrderData.finishCook.get(item.storeName) === true){
+                            if(userOrderData.finishCook.get(item.storeName + "_orders") === true){
                                 // 調理が既に完了している屋台を保存
                                 finishCookStoreName.push(item.storeName);
                             }
