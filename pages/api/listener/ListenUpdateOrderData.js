@@ -28,7 +28,7 @@ export default async function ListenUpdateOrderData(req, res) {
 
       let resumeToken = null;
 
-      createChangeStream = () => {
+      const createChangeStream = () => {
         const options = resumeToken ? { resumeAfter: resumeToken } : {};
         const storeOrderChangeStream = StoreOrder.watch([], options);
         storeOrderChangeStream.on('change', async (change) => {
