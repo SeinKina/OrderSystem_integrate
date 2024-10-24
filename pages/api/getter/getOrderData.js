@@ -37,8 +37,17 @@ export async function getOrderData(userNumber, userName, lineUserId) {
 
     const firstOrder = orderData[0];
     // console.log(firstOrder);
-    firstOrder.lineUserId = lineUserId; // 取得したデータにlineUserIdをセット
-    await firstOrder.save();
+    if (firstOrder.lineUserId === null){
+        firstOrder.lineUserId = lineUserId; // 取得したデータにlineUserIdをセット
+        await firstOrder.save();
+    }
+    else{
+        return {
+            success: true,
+            OrderData: null,
+            lineId: true,
+        }
+    }
 
     // 各注文の商品情報を追加
     const  orderDetails = {

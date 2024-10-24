@@ -72,7 +72,13 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                         replyToken: event.replyToken,
                         messages: [{type:"text", "text":"番号または名前が違います"}],
                     });
-                } else {
+                } else if (OrderData.lineId === true){
+                    await client.replyMessage({
+                        replyToken: event.replyToken,
+                        messages: [{type:"text", "text":"この注文は既に連携されています"}],
+                    });
+                }
+                else {
                     // 店ごとに注文情報をグループ化
                     const storeOrderMap: { [storeId: string]: orderList[] } = {};
                     const finishCookStoreName: string[] = [];
