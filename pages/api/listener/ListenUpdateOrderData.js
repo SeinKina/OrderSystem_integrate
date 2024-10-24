@@ -31,8 +31,7 @@ export default async function ListenUpdateOrderData(req, res) {
 
       const createChangeStream = () => {
         if (isListening) return;
-        isListening = true;
-        
+
         const options = resumeToken ? { resumeAfter: resumeToken } : {};
         const storeOrderChangeStream = StoreOrder.watch([], options);
         storeOrderChangeStream.on('change', async (change) => {
@@ -55,13 +54,17 @@ export default async function ListenUpdateOrderData(req, res) {
         // エラーハンドリングと再接続
         storeOrderChangeStream.on('error', (error) => {
           console.error('changestreamエラー:', error);
+          isListening = false;
           setTimeout(createChangeStream, 5000);
         });
 
         storeOrderChangeStream.on('end', () => {
           console.error('changestreamが終了しました。再接続するよ');
+          isListening = false;
           setTimeout(createChangeStream, 5000);
         });
+
+        isListening = true;
       };
 
       createChangeStream();
