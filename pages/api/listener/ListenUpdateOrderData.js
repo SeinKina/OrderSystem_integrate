@@ -27,8 +27,12 @@ export default async function ListenUpdateOrderData(req, res) {
       }
 
       let resumeToken = null;
+      let isListening = false; // 監視が開始されているかどうかのフラグ
 
       const createChangeStream = () => {
+        if (isListening) return;
+        isListening = true;
+        
         const options = resumeToken ? { resumeAfter: resumeToken } : {};
         const storeOrderChangeStream = StoreOrder.watch([], options);
         storeOrderChangeStream.on('change', async (change) => {
