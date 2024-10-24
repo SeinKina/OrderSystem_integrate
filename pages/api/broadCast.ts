@@ -10,7 +10,7 @@ const config = {
   
 const client =  new MessagingApiClient(config);
 
-export async function broadCast(req: NextApiRequest, res: NextApiResponse) {
+export default async function broadCast(req: NextApiRequest, res: NextApiResponse) {
     if (req.method === 'POST') {
         const { message } = req.body;
     
