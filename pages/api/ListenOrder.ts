@@ -59,7 +59,6 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
         case "watingName":
             const nameMessageText = messageText.replace(/[ぁ-ん]/g, (s: string) => String.fromCharCode(s.charCodeAt(0) + 0x60));
             userStatus[userId].userName = nameMessageText;
-            userStatus[userId].status = "watingName";
             await client.showLoadingAnimation({
                 chatId: userId,
                 loadingSeconds: 30,
@@ -135,6 +134,7 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                 });
             }
             delete userStatus[userId];
+            console.log("userStatus消したよ");
             break;
         default:
             break;
