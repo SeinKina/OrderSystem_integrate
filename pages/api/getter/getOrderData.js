@@ -38,10 +38,12 @@ export async function getOrderData(userNumber, userName, lineUserId) {
     const firstOrder = orderData[0];
     // console.log(firstOrder);
     if (firstOrder.lineUserId === null){
+        console.log("lineIdは空だったよ");
         firstOrder.lineUserId = lineUserId; // 取得したデータにlineUserIdをセット
         await firstOrder.save();
     }
     else{
+        console.log("lineIdはあったよ");
         return {
             success: true,
             OrderData: null,

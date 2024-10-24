@@ -72,7 +72,7 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                         replyToken: event.replyToken,
                         messages: [{type:"text", "text":"番号または名前が違います"}],
                     });
-                } else if (OrderData.lineId === true){
+                } else if (OrderData && 'lineId' in OrderData){
                     await client.replyMessage({
                         replyToken: event.replyToken,
                         messages: [{type:"text", "text":"この注文は既に連携されています"}],
