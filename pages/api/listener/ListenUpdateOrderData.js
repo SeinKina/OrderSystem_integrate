@@ -69,7 +69,12 @@ export default async function ListenUpdateOrderData(req, res) {
 
       createChangeStream();
 
+      setInterval(() => {
+        console.log(`Keep-alive: ${collectionName}`);
+      }, 300000); // 5分ごとにログを出力
+
     });
+    
     res.status(200).json({ message: '変更の監視を開始しました' });
   } catch (error) {
     console.error('エラーが発生しました:', error);
