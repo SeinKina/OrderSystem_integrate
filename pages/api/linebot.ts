@@ -46,7 +46,7 @@ export default async function handler(
           chatId: userId,
           loadingSeconds: 30,
         });
-        const imageUrl = 'https://ordersystemlinebot-production.up.railway.app/images/menu1.png';
+        const imageUrl = 'https://ordersystemlinebot-production.up.railway.app/images/menu2.png';
         // 画像メッセージを送信
         
         const imageMessage: ImageMessage = {
