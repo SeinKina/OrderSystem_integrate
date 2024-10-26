@@ -99,7 +99,7 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                     });
 
                     // 各店ごとにフレックスメッセージを作成して送信
-                    for (const [storeId, orders] of Object.entries(storeOrderMap)) {
+                    for (const [, orders] of Object.entries(storeOrderMap)) {
                         const flexMsg = await flexMessage(orders);
                         await client.pushMessage({
                             to: userId,
