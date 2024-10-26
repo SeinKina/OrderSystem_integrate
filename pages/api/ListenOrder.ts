@@ -101,10 +101,9 @@ export async function listenOrder(event: line.WebhookEvent, client: line.messagi
                     // 各店ごとにフレックスメッセージを作成して送信
                     for (const [storeId, orders] of Object.entries(storeOrderMap)) {
                         const flexMsg = await flexMessage(orders);
-                        const waitTimeValue = Math.floor(userOrderData.waitTime.get(storeId) / 60000);  // ミリ秒を分に変換
                         await client.pushMessage({
                             to: userId,
-                            messages: [flexMsg,{type:"text", "text":`${orders[0].storeName}の注文です\n待ち時間は約${waitTimeValue} 分です`},],
+                            messages: [flexMsg,{type:"text", "text":`${orders[0].storeName}の注文です`},],
                         });
                     }
                     await client.pushMessage({
