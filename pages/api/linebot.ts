@@ -1,26 +1,26 @@
 import { NextApiRequest, NextApiResponse } from 'next'
+import { listenOrder } from './ListenOrder';
+import { ImageMessage } from '@line/bot-sdk';
 import * as line from '@line/bot-sdk';
-import { listenOrser } from './ListenOrder';
+const MessagingApiClient = line.messagingApi.MessagingApiClient;
 
-export let userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
+export const userStatus: { [userId: string]: { status: string, userNumber: number, userName: string } } = {};
 
 const config = {
   channelAccessToken: process.env.CHANNEL_ACCESS_TOKEN!,
   channelSecret: process.env.CHANNEL_SECRET!
 };
 
-const client = new line.Client(config);
+const client =  new MessagingApiClient(config);
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
   if (req.method !== 'POST') {
-    res.status(405).send('Method Not Allowed');
+    res.status(404).send('Method Not Allowed');
     return;
   }
-
-  console.log('Request body:', req.body);  // リクエストボディを出力
 
   try {
     const events = req.body.events;
@@ -37,18 +37,38 @@ export default async function handler(
     if (event.type === 'message' && event.message.type === 'text') {
       const messageText = event.message.text;
 
-      if (messageText === '注文完了') {
+      if (messageText === '注文情報との連携') {
         console.log("ここだよ")
-        await listenOrser(event, client);
+        await listenOrder(event, client);
         res.status(200).json({ message: 'hello ok' });
-      } else {
+      } else if(messageText === 'メニュー表'){
+        await client.showLoadingAnimation({
+          chatId: userId,
+          loadingSeconds: 30,
+        });
+        const imageUrl = 'https://ordersystemlinebot-production.up.railway.app/images/menu2.png';
+        // 画像メッセージを送信
+        
+        const imageMessage: ImageMessage = {
+          type: 'image',                      
+          originalContentUrl: imageUrl,       
+          previewImageUrl: imageUrl,         
+        };
+
+        await client.replyMessage({
+          replyToken: event.replyToken,
+          messages:[imageMessage],
+        });
+        
+      }
+      else {
         if (!userStatus[userId]){
-          await client.replyMessage(event.replyToken, {
-            type: 'text',
-            text: 'たくさん注文してね',
+          await client.replyMessage({
+            replyToken: event.replyToken,
+            messages:[{type:"text", "text":"たくさん注文してね"},],
           });
         } else {
-          await listenOrser(event, client);
+          await listenOrder(event, client);
         }
         res.status(200).json({ message: 'no hello' });
       }
@@ -57,6 +77,7 @@ export default async function handler(
       res.status(400).json({ message: 'Unsupported event type' });
     }
   } catch (e) {
+    console.log("era-500: ", e);
     res.status(500).json({ message: `error: ${e}` });
   }
 }

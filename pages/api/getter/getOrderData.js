@@ -1,24 +1,34 @@
 // pages/api/getOrderData.js
 import connectToDatabase from '../../../lib/mongoose';
 import OrderData from '../../../models/OrderData';
-import ProductData from '../../../models/ProductData';
-import StoreData from '../../../models/StoreData';
+import ProductData from '../../../models/ProductData';  // eslint-disable-line
+import StoreData from '../../../models/StoreData';  // eslint-disable-line
 
+// タイムアウト用のヘルパー関数
+function timeoutPromise(ms) {
+    return new Promise((_, reject) =>
+      setTimeout(() => reject(new Error(`Request timed out after ${ms} ms`)), ms)
+    );
+}
+  
 export async function getOrderData(userNumber, userName, lineUserId) {
   await connectToDatabase();
   try {
-    const orderData = await OrderData.find({ ticketNumber: userNumber, clientName: userName })
-    .populate({
-        path: 'orderList.productId',
-        select: 'productName productImageUrl',
-    })
-    .populate({
-        path: 'orderList.storeId',
-        select: 'storeName',
-    })
-    .exec();
-    // console.log(orderData);
+    const orderData = await Promise.race([OrderData.find({ ticketNumber: userNumber, clientName: userName })
+        .populate({
+            path: 'orderList.productId',
+            select: 'productName productImageUrl',
+        })
+        .populate({
+            path: 'orderList.storeId',
+            select: 'storeName',
+        })
+        .exec(),
+        timeoutPromise(10000) // 10秒以内に解決されなければタイムアウト
+    ]);
+
     if (orderData.length === 0){
+        console.log("空だったよ");
         return{
             success: true,
             orderDetails: null,
@@ -26,36 +36,48 @@ export async function getOrderData(userNumber, userName, lineUserId) {
     }
 
     const firstOrder = orderData[0];
-    firstOrder.LineUserId = lineUserId; // 取得したデータにlineUserIdをセット
-    await firstOrder.save();
+    // console.log(firstOrder);
+    if (!firstOrder.lineUserId){
+        console.log("lineIdは空だったよ");
+        firstOrder.lineUserId = lineUserId; // 取得したデータにlineUserIdをセット
+        await firstOrder.save();
+    }
+    else{
+        console.log("lineIdはあったよ");
+        return {
+            success: true,
+            OrderData: null,
+            lineId: true,
+        }
+    }
+
     // 各注文の商品情報を追加
     const  orderDetails = {
         ticketNumber: firstOrder.ticketNumber,   // 整理券番号
-        LineUserId: firstOrder.LineUserId,       // LINEのユーザーID
         clientName: firstOrder.clientName,       // 注文者名
         orderList: firstOrder.orderList.map(orderItem => {
+            console.log("storeIdこれ: " ,orderItem.storeId);
             const product = orderItem.productId;  // populate された productId から商品データを取得
-            const store = orderItem.storeId;
             return {
             productName: product.productName,         // 商品名
             productImageUrl: product.productImageUrl, // 商品画像URL
             orderQuantity: orderItem.orderQuantity,   // 注文個数
-            storeId: orderItem.storeId,               // storeId
-            storeName: store.storeName,                 // 屋台名
+            storeId: orderItem.storeId._id.toString(),  // storeId
+            storeName: orderItem.storeId.storeName,     // 屋台名
             };
         }),
-        createdAt: firstOrder.createdAt,         // 作成日時
-        updatedAt: firstOrder.updatedAt,         // 更新日時
+        waitTime: firstOrder.waitTime,
+        finishCook: firstOrder.finishCook,
     }; 
 
-    console.log(orderDetails);
-
+    console.log("wittime: ", firstOrder.waitTime);
     return {
         success: true,
         orderDetails,
     };
-    // return allOrderData; // 取得したデータを返す
-  } catch {
+  } catch (error){
+
+    console.log('Error:', error.message);
     return { success: false }; // エラー処理
   }
 }
