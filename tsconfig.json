@@ -13,38 +13,18 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "incremental": true
+    "incremental": true,
   },
   "include": [
     "next-env.d.ts",
     "**/*.ts",
-    "**/*.tsx"
-, "pages/ranking/Sales1st.jsx"  ],
+    "**/*.tsx",
+    "pages/ranking/Sales1st.jsx",
+    "pages/api/getter/getOrderData.js"  ],
   "exclude": [
     "node_modules"
   ],
   "paths": {
-    "@/*": ["./*"]
-  }
-}
-{
-  "compilerOptions": {
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "strict": true,
-    "noEmit": true,
-    "esModuleInterop": true,
-    "module": "esnext",
-    "moduleResolution": "bundler",
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "jsx": "preserve",
-    "incremental": true,
-    "paths": {
-      "@/*": ["./src/*"]
-    }
+    "@/*": ["./*"],
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "pages/api/getter/getOrderData.js"],
-  "exclude": ["node_modules"]
 }
