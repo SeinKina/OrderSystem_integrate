@@ -32,3 +32,4 @@ https://www.canva.com/design/DAGpBKSUJK8/R5ar31UoPaZQxqW66G_sbw/edit?utm_content
 
 
 ## 使用した技術
+![使用した技術](https://drive.google.com/file/d/1JFLVWWrDFSaBq4YSPAz5KgUYu2FKpdm8/view?usp=sharing "使用した技術")
